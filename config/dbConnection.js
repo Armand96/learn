@@ -1,8 +1,8 @@
 const sequelize = require('sequelize');
 
-const dbconn = new sequelize("nodejs", "root", "", {
+const dbconn = new sequelize("nodejs", "postgres", "armand96", {
     host: 'localhost',
-    dialect: 'mysql'
+    dialect: 'postgres'
 });
 
 dbconn.authenticate().then(() => {

@@ -1,17 +1,25 @@
-const userModel = require('../models/user');
-const Hash = require('password-hash');
+const itemModel = require('../models/item');
 
 var dataResponse = {
-    success:true,
-    message:"success",
-    response: ''
+    success: true,
+    message: "success",
+    response: ""
 }
 
 module.exports = {
 
-    async allUser(req, res) {
+    async testImage(req, res){
 
-        await userModel.findAll().then( data => {
+        if(req.file){
+            res.send(req.file);
+        }
+        else throw 'error';
+
+    },
+
+    async allItem(req, res) {
+
+        await itemModel.findAll().then( data => {
             
             if(data.length == 0) dataResponse.message = "data is empty";
             dataResponse.response = data;
@@ -26,12 +34,12 @@ module.exports = {
 
     },
 
-    async insertUser(req, res){
+    async insertItem(req, res){
 
         const { username, password } = req.body;
         var hashedpassword = Hash.generate(password);
         
-        await userModel.create({
+        await itemModel.create({
 
             username:username,
             password:hashedpassword
@@ -57,11 +65,11 @@ module.exports = {
 
     },
 
-    async singleUser(req, res){
+    async singleItem(req, res){
 
         const userid = req.params.userid;
 
-        await userModel.findAll({
+        await itemModel.findAll({
             where: {
                 userid: userid
             }
@@ -86,7 +94,7 @@ module.exports = {
         const { password } = req.body;
         var hashedpassword = Hash.generate(password);
 
-        await userModel.update({
+        await itemModel.update({
             password: hashedpassword
         }, {
             where: {
@@ -107,18 +115,18 @@ module.exports = {
 
     },
 
-    async deleteUser(req, res){
+    async deleteItem(req, res){
 
         const userid = req.params.userid;
 
-        await userModel.destroy({
+        await itemModel.destroy({
             where: {
                 userid: userid
             }
         }).then( data => {
             
             // console.log(data);
-            if(data == 1) dataResponse.message = "User has been deleted";
+            if(data == 1) dataResponse.message = "Item has been deleted";
             res.send(dataResponse);
 
         }).catch( err => {
