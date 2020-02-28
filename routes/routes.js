@@ -32,7 +32,7 @@ routes.group('/api', api => {
 
         itemRoute.route('/')
             .get(itemCtrl.allItem)
-            .post(itemCtrl.insertItem);
+            .post(upload.single('item_img_name'), itemCtrl.insertItem);
 
         
 

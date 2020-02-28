@@ -1,4 +1,14 @@
 const itemModel = require('../models/item');
+const path = require("path");
+const fs = require("fs");
+
+const handleError = (err, res) => {
+    console.log(err);
+    res
+      .status(500)
+      .contentType("text/plain")
+      .end("Oops! Something went wrong!");
+};
 
 var dataResponse = {
     success: true,
@@ -10,10 +20,29 @@ module.exports = {
 
     async testImage(req, res){
 
-        if(req.file){
-            res.send(req.file);
+        console.log(req.file);
+        const tempPath = req.file.path;
+        const targetPath = path.join(__dirname, "../uploads/images/"+req.file.originalname);
+
+        if (path.extname(req.file.originalname).toLowerCase() === ".jpg") {
+            fs.rename(tempPath, targetPath, err => {
+                if (err) return handleError(err, res);
+
+                res
+                .status(200)
+                .contentType("text/plain")
+                .end("File uploaded!");
+            });
+        } else {
+            fs.unlink(tempPath, err => {
+                if (err) return handleError(err, res);
+
+                res
+                .status(403)
+                .contentType("text/plain")
+                .end("Only .jpg files are allowed!");
+            });
         }
-        else throw 'error';
 
     },
 
@@ -36,24 +65,39 @@ module.exports = {
 
     async insertItem(req, res){
 
-        const { username, password } = req.body;
-        var hashedpassword = Hash.generate(password);
-        
+        console.log(req.file);
+        var item_img_name = "";
+        const { itemname, menuid, description, price, show, out_of_stock } = req.body;
+
+        if(req.file !== undefined){
+
+            const tempPath = req.file.path;
+            const targetPath = path.join(__dirname, "../uploads/images/"+itemname+".jpg");
+            item_img_name = itemname+".jpg";
+            item_img_name = item_img_name.split(' ').join('_');
+
+            fs.rename(tempPath, targetPath, err => {
+                if (err) return handleError(err, res);
+            });
+
+        }
+
         await itemModel.create({
 
-            username:username,
-            password:hashedpassword
+            itemname:itemname,
+            menuid:menuid,
+            description: description,
+            price: price,
+            item_img_name:item_img_name,
+            show: show,
+            out_of_stock: out_of_stock
 
         }).then( data =>{
 
             console.log(data);
-            
-            var userData = {
-                userid: data.userid,
-                username: data.username,
-            }
-
-            dataResponse.response = userData;
+            if(data !== undefined || data !== null) dataResponse.message = "Success Insert Item";
+            else dataResponse.message = "Failed Insert Item";
+            dataResponse.response = data;
             res.send(dataResponse);
 
         }).catch( err => {
@@ -62,7 +106,6 @@ module.exports = {
             res.status(500).send(err);
 
         });
-
     },
 
     async singleItem(req, res){
@@ -88,22 +131,43 @@ module.exports = {
 
     },
 
-    async updatePassword(req, res){
+    async updateItem(req, res){
 
-        const userid = req.params.userid;
-        const { password } = req.body;
-        var hashedpassword = Hash.generate(password);
+        console.log(req.file);
+        const itemid = req.params.itemid;
+        const { itemname, menuid, description, price, show, out_of_stock } = req.body;
+
+        if(req.file !== undefined){
+
+            const tempPath = req.file.path;
+            const targetPath = path.join(__dirname, "../uploads/images/"+itemname+".jpg");
+            item_img_name = itemname+".jpg";
+            item_img_name = item_img_name.split(' ').join('_');
+
+            fs.rename(tempPath, targetPath, err => {
+                if (err) return handleError(err, res);
+            });
+
+        }
 
         await itemModel.update({
-            password: hashedpassword
+
+            itemname:itemname,
+            menuid:menuid,
+            description: description,
+            price: price,
+            item_img_name:item_img_name,
+            show: show,
+            out_of_stock: out_of_stock
+
         }, {
             where: {
-                userid: userid
+                itemid: itemid
             }
         }).then( data => {
 
             // console.log(data);
-            if(data == 1) dataResponse.message = "Success change password";
+            if(data == 1) dataResponse.message = "Success Update Item";
             res.send(dataResponse);
 
         }).catch( err => {
