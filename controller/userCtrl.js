@@ -1,5 +1,7 @@
 const userModel = require('../models/user');
+const seq = require('sequelize');
 const Hash = require('password-hash');
+const dbconn = require('../config/dbConnection');
 
 var dataResponse = {
     success:true,
@@ -28,13 +30,14 @@ module.exports = {
 
     async insertUser(req, res){
 
-        const { username, password } = req.body;
+        const { username, password, role } = req.body;
         var hashedpassword = Hash.generate(password);
         
         await userModel.create({
 
             username:username,
-            password:hashedpassword
+            password:hashedpassword,
+            role:role
 
         }).then( data =>{
 
@@ -127,6 +130,20 @@ module.exports = {
             res.status(500).send(err);
 
         });
+
+    },
+
+    async testQuerry(req, res) {
+
+        var sql = "SELECT * FROM users";
+        await dbconn.query(sql).then(([results, metadata]) => {
+            console.log(results)
+            dataResponse.response = results;
+            res.send(dataResponse);
+        }).catch( err => {
+            console.error(err);
+            res.status(500).send(err);
+        })
 
     }
 

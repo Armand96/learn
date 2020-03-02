@@ -18,17 +18,17 @@ module.exports = {
         allowNull: false,
         defaultValue: 0
       },
-      description: {
+      itemdesc: {
         type: Sequelize.TEXT,
         allowNull: false,
         defaultValue: ""
       },
-      price: {
+      itemprice: {
         type: Sequelize.FLOAT.UNSIGNED.ZEROFILL,
         allowNull: false,
         defaultValue: 0
       },
-      item_img_name: {
+      itemimage: {
         type: Sequelize.STRING(60),
         allowNull: false,
         defaultValue: ""

@@ -34,12 +34,13 @@ routes.group('/api', api => {
             .get(itemCtrl.allItem)
             .post(upload.single('item_img_name'), itemCtrl.insertItem);
 
-        
-
     })
 
     api.route('/testimage')
         .post(upload.single('item_img_name'), itemCtrl.testImage);
+
+    api.route('/testquery')
+        .get(userCtrl.testQuerry)
 
 });
 

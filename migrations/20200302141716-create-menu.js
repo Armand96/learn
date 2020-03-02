@@ -1,25 +1,28 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('users', {
-      userid: {
+    return queryInterface.createTable('menus', {
+      menuid: {
+        type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
-      username: {
+      menuname: {
         type: Sequelize.STRING(50),
         allowNull: false,
-        unique:true
+        unique: true,
       },
-      password: {
-        type: Sequelize.STRING,
-        allowNull:false
+      menudesc: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+        unique: true,
+        defaultValue: ""
       },
-      role: {
-        type: Sequelize.STRING(20),
-        allowNull:false
+      menuimage: {
+        type: Sequelize.STRING(50),
+        allowNull: false,
+        defaultValue: ""
       },
       createdAt: {
         allowNull: false,
@@ -32,6 +35,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('users');
+    return queryInterface.dropTable('menus');
   }
 };
