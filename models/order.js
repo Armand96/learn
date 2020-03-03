@@ -1,12 +1,12 @@
 const Sequelize = require("sequelize");
 const db = require("../config/dbConnection");
 
-const Sale = db.define("sale", {
-  salesid: {
+const Order = db.define("order", {
+  orderid: {
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
-    type: Sequelize.INTEGER.UNSIGNED.ZEROFILL
+    type: Sequelize.INTEGER
   },
   menuid: {
     type: Sequelize.INTEGER,
@@ -15,15 +15,7 @@ const Sale = db.define("sale", {
   itemid: {
     type: Sequelize.INTEGER,
     allowNull: false
-  },
-  discount: {
-    type: Sequelize.FLOAT,
-    allowNull: false
-  },
-  sold: {
-    type: Sequelize.FLOAT,
-    allowNull: false
-  },
+  }
 }, {
   defaultScope: {
     attributes: { exclude: ['createdAt', 'updatedAt'] }
@@ -32,4 +24,4 @@ const Sale = db.define("sale", {
 
 // Item.sync({});
 
-module.exports = Sale;
+module.exports = Order;

@@ -22,7 +22,7 @@ module.exports = {
 
         console.log(req.file);
         const tempPath = req.file.path;
-        const targetPath = path.join(__dirname, "../uploads/images/"+req.file.originalname);
+        const targetPath = path.join(__dirname, "../uploads/images/item/"+req.file.originalname);
 
         if (path.extname(req.file.originalname).toLowerCase() === ".jpg") {
             fs.rename(tempPath, targetPath, err => {
@@ -50,7 +50,7 @@ module.exports = {
 
         await itemModel.findAll().then( data => {
             
-            if(data.length == 0) dataResponse.message = "data is empty";
+            if(data.length == 0) dataResponse.message = "Item is empty";
             dataResponse.response = data;
             res.send(dataResponse);
 
@@ -66,15 +66,16 @@ module.exports = {
     async insertItem(req, res){
 
         console.log(req.file);
-        var item_img_name = "";
-        const { itemname, menuid, description, price, show, out_of_stock } = req.body;
+        var itemimage = "";
+        const { itemname, menuid, itemdesc, itemprice, show, out_of_stock } = req.body;
 
         if(req.file !== undefined){
 
+            itemimage = itemname+".jpg";
+            itemimage = itemimage.split(' ').join('_');
+
             const tempPath = req.file.path;
-            const targetPath = path.join(__dirname, "../uploads/images/"+itemname+".jpg");
-            item_img_name = itemname+".jpg";
-            item_img_name = item_img_name.split(' ').join('_');
+            const targetPath = path.join(__dirname, "../uploads/images/item/"+itemimage);
 
             fs.rename(tempPath, targetPath, err => {
                 if (err) return handleError(err, res);
@@ -86,9 +87,9 @@ module.exports = {
 
             itemname:itemname,
             menuid:menuid,
-            description: description,
-            price: price,
-            item_img_name:item_img_name,
+            itemdesc: itemdesc,
+            itemprice: itemprice,
+            itemimage:itemimage,
             show: show,
             out_of_stock: out_of_stock
 
@@ -110,16 +111,17 @@ module.exports = {
 
     async singleItem(req, res){
 
-        const userid = req.params.userid;
+        const itemid = req.params.itemid;
 
         await itemModel.findAll({
             where: {
-                userid: userid
+                itemid: itemid
             }
         }).then( data => {
 
             // console.log(data);
-            dataResponse.response = data;
+            if(data.length == 0) dataResponse.message = "Item is empty";
+            dataResponse.response = data[0];
             res.send(dataResponse);
 
         }).catch( err => {
@@ -133,30 +135,61 @@ module.exports = {
 
     async updateItem(req, res){
 
-        console.log(req.file);
+        // console.log(req.file);
+        // ============ get the params and data
         const itemid = req.params.itemid;
-        const { itemname, menuid, description, price, show, out_of_stock } = req.body;
+        const { itemname, menuid, itemdesc, itemprice, show, out_of_stock } = req.body;
+
+        // ============ old data
+        var olddata = {};
+        await itemModel.findAll({where:{itemid:itemid}}).then(data=>{
+            if(data.length == 0){
+                dataResponse.message = "Item Not Found";
+                res.send(dataResponse);
+                return;
+            } else olddata = data[0];
+        }).catch(err=>console.error(err));
+
+        itemimage = itemname+".jpg";
+        itemimage = itemimage.split(' ').join('_');
+
+        const tempPath = req.file.path;
+        const targetPath = path.join(__dirname, "../uploads/images/item/"+itemimage);
 
         if(req.file !== undefined){
 
-            const tempPath = req.file.path;
-            const targetPath = path.join(__dirname, "../uploads/images/"+itemname+".jpg");
-            item_img_name = itemname+".jpg";
-            item_img_name = item_img_name.split(' ').join('_');
-
+            // rename file yang telah diupload
             fs.rename(tempPath, targetPath, err => {
                 if (err) return handleError(err, res);
+
+                if(oldPath != targetPath){
+                    // delete file lama
+                    fs.unlink(oldPath, err => {
+                        if (err) return handleError(err, res);
+                    });
+                }
+
             });
 
+        } else {
+
+            // Jika ada file, hapus!!!
+            if(fs.existsSync(targetPath)){
+
+                fs.unlink(targetPath, err => {
+                    if (err) return handleError(err, res);
+                });
+    
+            }
         }
 
         await itemModel.update({
 
             itemname:itemname,
             menuid:menuid,
-            description: description,
-            price: price,
-            item_img_name:item_img_name,
+            itemdesc: itemdesc,
+            itemprice: itemprice,
+            itemimage:itemimage,
             show: show,
             out_of_stock: out_of_stock
 
@@ -168,6 +201,7 @@ module.exports = {
 
             // console.log(data);
             if(data == 1) dataResponse.message = "Success Update Item";
+            else dataResponse.message = "Failed Update Item";
             res.send(dataResponse);
 
         }).catch( err => {
@@ -181,16 +215,43 @@ module.exports = {
 
     async deleteItem(req, res){
 
-        const userid = req.params.userid;
+        const itemid = req.params.itemid;
+        var item = {};
 
+        // ========================== DELETE FILE
+        await itemModel.findAll({
+            where: {
+                itemid: itemid
+            }
+        }).then( data => {
+            if(data.length == 0){
+                dataResponse.message = "Item Not Found";
+                res.send(dataResponse);
+                return
+            } else item = data[0];
+            // console.log(item)
+        }).catch( err => console.error(err) );
+
+        const targetPath = path.join(__dirname, "../uploads/images/item/"+item.itemimage);
+        
+        if(fs.existsSync(targetPath)){
+
+            fs.unlink(targetPath, err => {
+                if (err) return handleError(err, res);
+            });
+
+        }
+        
+        // ========================== DELETE DATA
         await itemModel.destroy({
             where: {
-                userid: userid
+                itemid: itemid
             }
         }).then( data => {
             
             // console.log(data);
             if(data == 1) dataResponse.message = "Item has been deleted";
+            else dataResponse.message = "Fail Delete Item";
             res.send(dataResponse);
 
         }).catch( err => {

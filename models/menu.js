@@ -31,4 +31,4 @@ const Menu = db.define("menu", {
 
 // Item.sync({});
 
-module.exports = Item;
+module.exports = Menu;
