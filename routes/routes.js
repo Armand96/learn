@@ -2,6 +2,7 @@ const routes = require('express').Router(); require('express-group-routes');
 const userCtrl = require('../controller/userCtrl');
 const itemCtrl = require('../controller/itemCtrl');
 const menuCtrl = require('../controller/menuCtrl');
+const orderCtrl = require('../controller/orderCtrl');
 
 const multer = require('multer');
 const uploadItemImages = multer({dest: __dirname + '../../uploads/images/item'});
@@ -63,8 +64,12 @@ routes.group('/api', api => {
     // ---------------- ORDER ROUTES
     api.group('/order', orderRoute => {
 
-        // orderRoute.route('/')
-        // orderRoute.route('/:orderid')
+        orderRoute.route('/')
+            .get(orderCtrl.allOrder)
+            .post(orderCtrl.insertOrder);
+        orderRoute.route('/:orderid')
+            .get(orderCtrl.singleOrder);
+        orderRoute.post('/search', orderCtrl.searchOrder);
 
     });
 

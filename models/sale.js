@@ -16,11 +16,15 @@ const Sale = db.define("sale", {
     type: Sequelize.INTEGER,
     allowNull: false
   },
+  quantity: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
   discount: {
     type: Sequelize.FLOAT,
     allowNull: false
   },
-  sold: {
+  total: {
     type: Sequelize.FLOAT,
     allowNull: false
   },

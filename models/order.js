@@ -15,6 +15,10 @@ const Order = db.define("order", {
   itemid: {
     type: Sequelize.INTEGER,
     allowNull: false
+  },
+  quantity: {
+    type: Sequelize.INTEGER,
+    allowNull: false
   }
 }, {
   defaultScope: {
