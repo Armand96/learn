@@ -3,6 +3,7 @@ const userCtrl = require('../controller/userCtrl');
 const itemCtrl = require('../controller/itemCtrl');
 const menuCtrl = require('../controller/menuCtrl');
 const orderCtrl = require('../controller/orderCtrl');
+const salesCtrl = require('../controller/salesCtrl');
 
 const multer = require('multer');
 const uploadItemImages = multer({dest: __dirname + '../../uploads/images/item'});
@@ -76,8 +77,12 @@ routes.group('/api', api => {
     // ---------------- SALES ROUTES
     api.group('/sales', salesRoute => {
 
-        // salesRoute.route('/')
-        // salesRoute.route('/:salesid')
+        salesRoute.route('/')
+            .get(salesCtrl.allSales)
+            .post(salesCtrl.insertSales);
+        salesRoute.route('/:salesid')
+            .get(salesCtrl.singleSales);
+        salesRoute.post('/search', salesCtrl.searchSales);
 
     })
 

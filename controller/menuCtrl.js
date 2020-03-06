@@ -91,7 +91,7 @@ module.exports = {
         }).then( data => {
 
             if(data.length == 0) dataResponse.message = "Menu is empty";
-            dataResponse.response = data;
+            dataResponse.response = data[0];
             res.send(dataResponse);
 
         }).catch( err => {

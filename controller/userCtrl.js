@@ -49,7 +49,7 @@ module.exports = {
 
         await userModel.findAll().then(data => {
 
-            if (data.length == 0) dataResponse.message = userNotFound;
+            if (data.length == 0) dataResponse.message = EmptyMsg;
             else dataResponse.messagea = successGetMsg;
             dataResponse.response = data;
             res.send(dataResponse);

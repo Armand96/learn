@@ -31,7 +31,6 @@ module.exports = {
 
     async insertOrder(req, res){
 
-        var message = "";
         const { menuid, itemid, quantity } = req.body;
         await orderModel.create({
             menuid: menuid,
@@ -49,12 +48,11 @@ module.exports = {
                     quantity: data.quantity
                 }
 
-                message = "Success Insert Order";
+                dataResponse.message = "Success Insert Order";
 
-            } else message = "Fail Insert Order";
+            } else dataResponse.message = "Fail Insert Order";
 
             dataResponse.response = orderData;
-            dataResponse.message = message;
             res.send(dataResponse);            
 
         });
@@ -101,7 +99,7 @@ module.exports = {
         await dbconn.query(sql).then( ([result, metadata]) => {
             message = result.length == 0 ? "Order Not Found" : "Success get Order Data";
             dataResponse.message = message;
-            dataResponse.response = result;
+            dataResponse.response = result[0];
             res.send(dataResponse);
         })
 

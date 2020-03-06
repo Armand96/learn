@@ -16,6 +16,10 @@ const Sale = db.define("sale", {
     type: Sequelize.INTEGER,
     allowNull: false
   },
+  priceperitem: {
+    type: Sequelize.FLOAT,
+    allowNull: false
+  },
   quantity: {
     type: Sequelize.INTEGER,
     allowNull: false

@@ -49,8 +49,8 @@ module.exports = {
     async allItem(req, res) {
 
         await itemModel.findAll().then( data => {
-            
-            if(data.length == 0) dataResponse.message = "Item is empty";
+
+            dataResponse.message = (data.length == 0) ? "Item is empty" : "Success get data";
             dataResponse.response = data;
             res.send(dataResponse);
 
@@ -95,9 +95,7 @@ module.exports = {
 
         }).then( data =>{
 
-            console.log(data);
-            if(data !== undefined || data !== null) dataResponse.message = "Success Insert Item";
-            else dataResponse.message = "Failed Insert Item";
+            dataResponse.message = (data !== undefined || data !== null) ? "Success Insert Item" : "Failed Insert Item";
             dataResponse.response = data;
             res.send(dataResponse);
 
@@ -119,8 +117,7 @@ module.exports = {
             }
         }).then( data => {
 
-            // console.log(data);
-            if(data.length == 0) dataResponse.message = "Item is empty";
+            dataResponse.message = (data.length == 0) ? "Item Not Found" : "Success Get Item";
             dataResponse.response = data[0];
             res.send(dataResponse);
 
@@ -199,9 +196,8 @@ module.exports = {
             }
         }).then( data => {
 
-            // console.log(data);
-            if(data == 1) dataResponse.message = "Success Update Item";
-            else dataResponse.message = "Failed Update Item";
+            dataResponse.message = (data == 1) ? "Success Update Item" : "Failed Update Item";
+            dataResponse.response = data;
             res.send(dataResponse);
 
         }).catch( err => {
@@ -249,9 +245,7 @@ module.exports = {
             }
         }).then( data => {
             
-            // console.log(data);
-            if(data == 1) dataResponse.message = "Item has been deleted";
-            else dataResponse.message = "Fail Delete Item";
+            dataResponse.message = (data == 1) ? "Item has been deleted" : "Delete Item Failed";
             res.send(dataResponse);
 
         }).catch( err => {
