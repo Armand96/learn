@@ -6,9 +6,10 @@ const routes = require('./routes/routes');
 // const db = require('./config/dbConnection');
 // const userCtrl = require('./controller/userCtrl');
 
-app.use(express.urlencoded({extended:true}));
+// app.use(express.urlencoded({extended:false}));
 app.use(cors());
-app.use(bodyParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended:true}));
 app.use('/', routes);
 
 // ============================ GAK RAPIH ============================

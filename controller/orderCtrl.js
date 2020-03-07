@@ -1,4 +1,5 @@
 const orderModel = require('../models/order');
+const salesModel = require('../models/sale');
 const dbconn = require('../config/dbConnection');
 
 var dataResponse = {
@@ -115,6 +116,94 @@ module.exports = {
         //     res.send(dataResponse);            
 
         // })
+
+    },
+
+    async deleteOrder(req, res){
+
+        const orderid = req.params.orderid;
+        await orderModel.destroy({
+            where: {orderid:orderid}
+        }).then( data => {
+            console.log(data);
+            dataResponse.message = (data != null || data != undefined) ? "Order has been deleted":"Delete order failed";
+            dataResponse.response = data;
+            res.send(dataResponse);
+        }).catch( err=> {
+            console.error(err);
+            dataResponse.message = err;
+            dataResponse.success = false;
+            res.status(500).send(dataResponse);
+        });
+
+
+    },
+
+    async orderCompletePayment(req, res){
+
+        var orderDelSuccess = false;
+        const orderid = req.params.orderid;
+        var orders = {};
+
+        // ========= GET ORDERS DATA
+        var sql = "SELECT orderid, menuname, itemname, itemprice, quantity, itemprice * quantity AS total FROM orders "+
+                    "INNER JOIN menus ON orders.menuid = menus.menuid "+
+                    "INNER JOIN items ON orders.itemid = items.itemid WHERE orderid = "+orderid;
+
+        await dbconn.query(sql).then( ([result, metadata]) => {
+            if(result.length == 0){
+                dataResponse.message = "Order Not Found";
+                dataResponse.res = data;
+                res.send(dataResponse);
+                return;
+            }
+            orders = data[0];
+        }).catch(err=>{
+            console.error(err);
+            dataResponse.message = err;
+            dataResponse.success = false;
+            res.status(500).send(dataResponse);
+        });
+
+        // ========= DELETE ORDERS
+        await orderModel.destroy({
+            where: {orderid:orderid}
+        }).then( data => {
+            console.log(data);
+            orderDelSuccess = (data != null && data != undefined) ? true:false;
+        }).catch( err=> {
+            console.error(err);
+            dataResponse.message = err;
+            dataResponse.success = false;
+            res.status(500).send(dataResponse);
+            return;
+        });
+
+
+        if(orderDelSuccess){
+
+            await salesModel.create({
+
+                menuid: orders.menuid,
+                itemid: orders.itemid,
+                priceperitem: orders.itemprice,
+                quantity: orders.quantity,
+                discount: 0,
+                total: orders.itemprice * orders.quantity
+
+            }).then( data=> {
+
+                if(data){
+                    dataResponse.success = true;
+                    dataResponse.message = "Order payment success";
+                    dataResponse.response = data;
+                } else dataResponse.message = "Order payment failed";
+
+                res.send(dataResponse);
+
+            })
+
+        }
 
     }
 

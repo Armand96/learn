@@ -20,6 +20,8 @@ const uploadMenuImages = multer({dest: __dirname + '../../uploads/images/menu'})
 
 routes.group('/api', api => {
 
+    api.post('/login', userCtrl.login);
+
     // ---------------- USER ROUTES
     api.group('/user', userRoute => {
 
@@ -69,7 +71,8 @@ routes.group('/api', api => {
             .get(orderCtrl.allOrder)
             .post(orderCtrl.insertOrder);
         orderRoute.route('/:orderid')
-            .get(orderCtrl.singleOrder);
+            .get(orderCtrl.singleOrder)
+            .put(orderCtrl.orderCompletePayment);
         orderRoute.post('/search', orderCtrl.searchOrder);
 
     });

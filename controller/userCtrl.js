@@ -188,6 +188,38 @@ module.exports = {
             res.status(500).send(err);
         })
 
+    },
+
+    async login(req, res){
+
+        console.log(req.body);
+        const { username, password } = req.body;
+        await userModel.findAll({where:{username:username}, attributes: ['userid','username','password']}).then( data=>{
+            
+            var user = data[0];
+
+            if(data.length == 0) {
+                dataResponse.message = "User Not Found";
+                dataResponse.response = data;
+                res.send(dataResponse);
+                return;
+            }
+
+            if(Hash.verify(password, user.password)) {
+                dataResponse.message = "Success Get User";
+                dataResponse.response = user;
+            } else {
+                dataResponse.message = "Wrong Password";
+                dataResponse.response = {};
+            } 
+
+            res.send(dataResponse);
+
+        }).then(err=>{
+            console.error(err);
+            res.status(500).send(err);
+        });
+
     }
 
 }
