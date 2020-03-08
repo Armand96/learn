@@ -143,6 +143,7 @@ module.exports = {
 
         var orderDelSuccess = false;
         const orderid = req.params.orderid;
+        const discount = req.body.discountl
         var orders = {};
 
         // ========= GET ORDERS DATA
@@ -182,14 +183,16 @@ module.exports = {
 
         if(orderDelSuccess){
 
+            var total = orders.itemprice * orders.quantity * (discount/100);
+
             await salesModel.create({
 
                 menuid: orders.menuid,
                 itemid: orders.itemid,
                 priceperitem: orders.itemprice,
                 quantity: orders.quantity,
-                discount: 0,
-                total: orders.itemprice * orders.quantity
+                discount: discount,
+                total: total//orders.itemprice * orders.quantity
 
             }).then( data=> {
 

@@ -121,8 +121,6 @@ module.exports = {
                 return;
             } else olddata = data[0];
         }).catch( err => console.error(err));
-        console.log(olddata);
-        console.log(olddata.menuimage);
 
 
         // ========= The Image you want to save
@@ -175,6 +173,7 @@ module.exports = {
             // console.log(data);
             if(data == 1) dataResponse.message = "Success Update Menu";
             else dataResponse.message = "Failed Update Menu";
+            dataResponse.response = data;
             res.send(dataResponse);
 
         }).catch( err => {

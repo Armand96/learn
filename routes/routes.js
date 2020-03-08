@@ -1,4 +1,5 @@
 const routes = require('express').Router(); require('express-group-routes');
+
 const userCtrl = require('../controller/userCtrl');
 const itemCtrl = require('../controller/itemCtrl');
 const menuCtrl = require('../controller/menuCtrl');
@@ -8,17 +9,13 @@ const salesCtrl = require('../controller/salesCtrl');
 const multer = require('multer');
 const uploadItemImages = multer({dest: __dirname + '../../uploads/images/item'});
 const uploadMenuImages = multer({dest: __dirname + '../../uploads/images/menu'});
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//       cb(null, '../upload/images')
-//     },
-//     filename: function (req, file, cb) {
-//       cb(null, file.fieldname + '-' + Date.now())
-//     }
-//   })
-// const upload = multer({ storage: storage });
+
+const passport = require('../config/passport');
 
 routes.group('/api', api => {
+
+    //protected routes
+    api.get('/testprotect', passport.passport.authenticate("jwt", { session: false }), userCtrl.allUser);
 
     api.post('/login', userCtrl.login);
 
@@ -41,12 +38,12 @@ routes.group('/api', api => {
 
         menuRoute.route('/')
             .get(menuCtrl.allMenu)
-            .post(uploadMenuImages.single('menuimage'), menuCtrl.insertMenu);
+            .post(passport.passport.authenticate("jwt", { session: false }), uploadMenuImages.single('menuimage'), menuCtrl.insertMenu);
 
         menuRoute.route('/:menuid')
             .get(menuCtrl.singleMenu)
-            .put(uploadMenuImages.single('menuimage'), menuCtrl.updateMenu)
-            .delete(menuCtrl.deleteMenu);
+            .put(passport.passport.authenticate("jwt", { session: false }), uploadMenuImages.single('menuimage'), menuCtrl.updateMenu)
+            .delete(passport.passport.authenticate("jwt", { session: false }), menuCtrl.deleteMenu);
 
     });
 
@@ -55,12 +52,12 @@ routes.group('/api', api => {
 
         itemRoute.route('/')
             .get(itemCtrl.allItem)
-            .post(uploadItemImages.single('itemimage'), itemCtrl.insertItem);
+            .post(passport.passport.authenticate("jwt", { session: false }), uploadItemImages.single('itemimage'), itemCtrl.insertItem);
 
         itemRoute.route('/:itemid')
             .get(itemCtrl.singleItem)
-            .put(uploadItemImages.single('itemimage'), itemCtrl.updateItem)
-            .delete(itemCtrl.deleteItem);
+            .put(passport.passport.authenticate("jwt", { session: false }), uploadItemImages.single('itemimage'), itemCtrl.updateItem)
+            .delete(passport.passport.authenticate("jwt", { session: false }), itemCtrl.deleteItem);
 
     });
 
@@ -69,11 +66,11 @@ routes.group('/api', api => {
 
         orderRoute.route('/')
             .get(orderCtrl.allOrder)
-            .post(orderCtrl.insertOrder);
+            .post(passport.passport.authenticate("jwt", { session: false }), orderCtrl.insertOrder);
         orderRoute.route('/:orderid')
             .get(orderCtrl.singleOrder)
-            .put(orderCtrl.orderCompletePayment);
-        orderRoute.post('/search', orderCtrl.searchOrder);
+            .put(passport.passport.authenticate("jwt", { session: false }), orderCtrl.orderCompletePayment);
+        orderRoute.post('/search', passport.passport.authenticate("jwt", { session: false }), orderCtrl.searchOrder);
 
     });
 
@@ -82,10 +79,10 @@ routes.group('/api', api => {
 
         salesRoute.route('/')
             .get(salesCtrl.allSales)
-            .post(salesCtrl.insertSales);
+            .post(passport.passport.authenticate("jwt", { session: false }), salesCtrl.insertSales);
         salesRoute.route('/:salesid')
             .get(salesCtrl.singleSales);
-        salesRoute.post('/search', salesCtrl.searchSales);
+        salesRoute.post('/search', passport.passport.authenticate("jwt", { session: false }), salesCtrl.searchSales);
 
     })
 

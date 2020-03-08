@@ -1,6 +1,7 @@
 const userModel = require('../models/user');
 const Hash = require('password-hash');
 const dbconn = require('../config/dbConnection');
+const passport = require('../config/passport');
 
 var dataResponse = {
     success: true,
@@ -45,12 +46,13 @@ module.exports = {
 
 
     },
+    
     async allUser(req, res) {
 
         await userModel.findAll().then(data => {
 
             if (data.length == 0) dataResponse.message = EmptyMsg;
-            else dataResponse.messagea = successGetMsg;
+            else dataResponse.message = successGetMsg;
             dataResponse.response = data;
             res.send(dataResponse);
 
@@ -192,22 +194,33 @@ module.exports = {
 
     async login(req, res){
 
-        console.log(req.body);
+        // console.log(req.body);
         const { username, password } = req.body;
         await userModel.findAll({where:{username:username}, attributes: ['userid','username','password']}).then( data=>{
             
             var user = data[0];
 
             if(data.length == 0) {
-                dataResponse.message = "User Not Found";
+                dataResponse.message = "Username doesn't exist";
                 dataResponse.response = data;
                 res.send(dataResponse);
                 return;
             }
 
             if(Hash.verify(password, user.password)) {
+
+                let payload = { id: user.userid };
+                let token = passport.jwt.sign(payload, passport.jwtOptions.secretOrKey);
+
+                var usersend = {
+                    userid: user.userid,
+                    username: user.username,
+                    token: token
+                }
+
                 dataResponse.message = "Success Get User";
-                dataResponse.response = user;
+                dataResponse.response = usersend;
+                
             } else {
                 dataResponse.message = "Wrong Password";
                 dataResponse.response = {};

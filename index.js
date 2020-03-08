@@ -3,6 +3,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
 const routes = require('./routes/routes');
+const multer = require('multer');
+
 // const db = require('./config/dbConnection');
 // const userCtrl = require('./controller/userCtrl');
 
