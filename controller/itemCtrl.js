@@ -18,6 +18,19 @@ var dataResponse = {
 
 module.exports = {
 
+    async getImage(req, res){
+        const imagename = req.params.imagename;
+        const dir = "../uploads/images/item/"+imagename;
+        const pathImage = path.join(__dirname, dir);
+        var Image = path.join(__dirname, "../upload/images/blank.jpg");
+
+        if(fs.existsSync(pathImage)){
+            Image = pathImage;
+        }
+
+        res.sendFile(Image);
+    },
+
     async testImage(req, res){
 
         console.log(req.file);

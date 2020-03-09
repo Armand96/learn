@@ -17,6 +17,10 @@ routes.group('/api', api => {
     //protected routes
     api.get('/testprotect', passport.passport.authenticate("jwt", { session: false }), userCtrl.allUser);
 
+    // GET IMAGES
+    api.get('/itemimage/:imagename', itemCtrl.getImage);
+    api.get('/menuimage/:imagename', menuCtrl.getImage);
+
     api.post('/login', userCtrl.login);
 
     // ---------------- USER ROUTES
