@@ -97,14 +97,10 @@ module.exports = {
 
         const menuid = req.params.menuid;
 
-        await menuModel.findAll({
-            where: {
-                menuid: menuid
-            }
-        }).then( data => {
+        await menuModel.findByPk(menuid).then( data => {
 
-            if(data.length == 0) dataResponse.message = "Menu is empty";
-            dataResponse.response = data[0];
+            if(data == null) dataResponse.message = "Menu Not Found";
+            dataResponse.response = data;
             res.send(dataResponse);
 
         }).catch( err => {
@@ -127,12 +123,12 @@ module.exports = {
 
         // old data
         var olddata = {};
-        await menuModel.findAll({ where: {menuid:menuid}}).then( data => {
-            if(data.length == 0){
+        await menuModel.findByPk(menuid).then( data => {
+            if(data == null){
                 dataResponse.message = "Menu Not Found";
                 res.send(dataResponse);
                 return;
-            } else olddata = data[0];
+            } else olddata = data;
         }).catch( err => console.error(err));
 
 
@@ -205,16 +201,12 @@ module.exports = {
         var menu = {};
 
         // ========================== DELETE FILE
-        await menuModel.findAll({
-            where: {
-                menuid: menuid
-            }
-        }).then( data => {
+        await menuModel.findByPk(menuid).then( data => {
             if(data.length == 0) {
                 dataResponse.message = "Menu Not Found";
                 res.send(dataResponse);
                 return;
-            } else menu = data[0];
+            } else menu = data;
             // console.log(menu)
         }).catch( err => console.error(err) );
 

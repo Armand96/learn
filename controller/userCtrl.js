@@ -106,16 +106,12 @@ module.exports = {
 
         const userid = req.params.userid;
 
-        await userModel.findAll({
-            where: {
-                userid: userid
-            }
-        }).then(data => {
+        await userModel.findByPk(userid).then(data => {
 
             // console.log(data);
-            if(data.length == 0) dataResponse.message = userNotFound;
+            if(data == null) dataResponse.message = userNotFound;
             else dataResponse.message = successGetMsg;
-            dataResponse.response = data[0];
+            dataResponse.response = data;
             res.send(dataResponse);
 
         }).catch(err => {
@@ -196,11 +192,11 @@ module.exports = {
 
         // console.log(req.body);
         const { username, password } = req.body;
-        await userModel.findAll({where:{username:username}, attributes: ['userid','username','password']}).then( data=>{
+        await userModel.findOne({where:{username:username}, attributes: ['userid','username','password']}).then( data=>{
             
-            var user = data[0];
+            var user = data;
 
-            if(data.length == 0) {
+            if(data == null) {
                 dataResponse.message = "Username doesn't exist";
                 dataResponse.response = data;
                 res.send(dataResponse);

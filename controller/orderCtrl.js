@@ -131,9 +131,7 @@ module.exports = {
             res.send(dataResponse);
         }).catch( err=> {
             console.error(err);
-            dataResponse.message = err;
-            dataResponse.success = false;
-            res.status(500).send(dataResponse);
+            res.status(500).send(err);
         });
 
 
@@ -141,7 +139,6 @@ module.exports = {
 
     async orderCompletePayment(req, res){
 
-        var orderDelSuccess = false;
         const orderid = req.params.orderid;
         const discount = req.body.discountl
         var orders = {};
@@ -161,9 +158,7 @@ module.exports = {
             orders = data[0];
         }).catch(err=>{
             console.error(err);
-            dataResponse.message = err;
-            dataResponse.success = false;
-            res.status(500).send(dataResponse);
+            res.status(500).send(err);
         });
 
         // ========= DELETE ORDERS
@@ -174,9 +169,7 @@ module.exports = {
             orderDelSuccess = (data != null && data != undefined) ? true:false;
         }).catch( err=> {
             console.error(err);
-            dataResponse.message = err;
-            dataResponse.success = false;
-            res.status(500).send(dataResponse);
+            res.status(500).send(err);
             return;
         });
 

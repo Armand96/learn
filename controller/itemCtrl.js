@@ -124,14 +124,10 @@ module.exports = {
 
         const itemid = req.params.itemid;
 
-        await itemModel.findAll({
-            where: {
-                itemid: itemid
-            }
-        }).then( data => {
+        await itemModel.findByPk(itemid).then( data => {
 
-            dataResponse.message = (data.length == 0) ? "Item Not Found" : "Success Get Item";
-            dataResponse.response = data[0];
+            dataResponse.message = (data == null) ? "Item Not Found" : "Success Get Item";
+            dataResponse.response = data;
             res.send(dataResponse);
 
         }).catch( err => {
@@ -152,12 +148,12 @@ module.exports = {
 
         // ============ old data
         var olddata = {};
-        await itemModel.findAll({where:{itemid:itemid}}).then(data=>{
-            if(data.length == 0){
+        await itemModel.findByPk(itemid).then(data=>{
+            if(data == null){
                 dataResponse.message = "Item Not Found";
                 res.send(dataResponse);
                 return;
-            } else olddata = data[0];
+            } else olddata = data;
         }).catch(err=>console.error(err));
 
         itemimage = itemname+".jpg";
@@ -228,16 +224,12 @@ module.exports = {
         var item = {};
 
         // ========================== DELETE FILE
-        await itemModel.findAll({
-            where: {
-                itemid: itemid
-            }
-        }).then( data => {
-            if(data.length == 0){
+        await itemModel.findByPk(itemid).then( data => {
+            if(data == null){
                 dataResponse.message = "Item Not Found";
                 res.send(dataResponse);
                 return
-            } else item = data[0];
+            } else item = data;
             // console.log(item)
         }).catch( err => console.error(err) );
 
