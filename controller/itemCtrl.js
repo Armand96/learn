@@ -1,6 +1,8 @@
 const itemModel = require('../models/item');
 const path = require("path");
 const fs = require("fs");
+const dbconn = require('../config/dbConnection');
+
 
 const handleError = (err, res) => {
     console.log(err);
@@ -259,6 +261,31 @@ module.exports = {
             res.status(500).send(err);
 
         });
+
+    },
+
+    async searchItem(req, res){
+
+        var message = "";
+        const { itemname, menuname, itemid, menuid } = req.body;
+
+        var itemNameParam = itemname == undefined ? "" : " AND itemname LIKE '%"+itemname+"%' ";
+        var menuNameParam = menuname == undefined ? "" : " AND menuname LIKE '%"+menuname+"%' ";
+        var itemIdParam = itemid == undefined ? "" : " AND itemid = "+itemid+" ";
+        var menuIdParam = menuid == undefined ? "" : " AND menus.menuid = "+menuid+" ";
+
+        var whereParams = (itemNameParam == "" || menuNameParam == "" || itemIdParam == "" || menuIdParam ==  "" || orderIdParam == "") ? "" : 
+                            " WHERE 1=1"+itemNameParam+menuNameParam+itemIdParam+menuIdParam;
+
+        // ============================ MANUAL QUERY
+        var sql = "SELECT itemid, menuname, itemname, itemimage, itemdesc, itemprice, itemprice FROM items "+
+                    "INNER JOIN menus ON items.menuid = menus.menuid "+whereParams;
+        await dbconn.query(sql).then( ([result, metadata]) => {
+            message = result.length == 0 ? "Item Not Found" : "Success get Item Data";
+            dataResponse.message = message;
+            dataResponse.response = result;
+            res.send(dataResponse);
+        })
 
     }
 

@@ -62,6 +62,7 @@ routes.group('/api', api => {
             .get(itemCtrl.singleItem)
             .put(passport.passport.authenticate("jwt", { session: false }), uploadItemImages.single('itemimage'), itemCtrl.updateItem)
             .delete(passport.passport.authenticate("jwt", { session: false }), itemCtrl.deleteItem);
+        itemRoute.post('/search', itemCtrl.searchItem);
 
     });
 
