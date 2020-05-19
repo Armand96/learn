@@ -1,6 +1,6 @@
 const sequelize = require('sequelize');
 
-const dbconn = new sequelize("nodejs", "postgres", "raptor", {
+const dbconn = new sequelize("restaurant", "postgres", "armand96", {
     host: 'localhost',
     dialect: 'postgres'
 });
